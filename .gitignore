@@ -59,6 +59,7 @@ runs/
 /apps/test_cpp_fit/test-fit
 engine_cmaes
 cart-pole
+dipole*
 pp
 terminals.dat
 _deprecated*
@@ -71,3 +72,4 @@ _deprecated*
 /source/Learners/Pytorch/old_stuff.py
 
 *.swp
+*.raw

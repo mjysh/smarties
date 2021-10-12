@@ -114,6 +114,6 @@ def app_main(comm):
       else: comm.sendState(state, reward); # normal state
 
 if __name__ == '__main__':
-  e = rl.Engine(sys.argv)
-  if( e.parse() ): exit()
-  e.run( app_main )
+    e = rl.Engine(sys.argv)
+    if( e.parse() ): exit()
+    e.run( app_main )

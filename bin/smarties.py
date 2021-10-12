@@ -424,6 +424,6 @@ if __name__ == '__main__':
   cmd = cmd + setEnvironmentFlags(parsed)
   cmd = cmd + setLaunchCommand(parsed, absRunPath)
 
-  # print('COMMAND:' + cmd )
+  print('COMMAND:' + cmd )
   signal.signal(signal.SIGINT, signal_handler)
   subprocess.run(cmd, executable=parsed.shell, shell=True)

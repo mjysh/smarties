@@ -1,0 +1,16 @@
+decision time step: 0.1
+max episodes: 30000
+max time steps: 300
+update time steps: 4000
+standard deviation in actions: 0.5
+number of update epochs: 80
+clip parameter: 0.2
+discount factor: 0.99
+Adam optimizer lr: 0.0003
+Adam optimizer betas: (0.9, 0.999)
+fish flexibility: 0.5
+mu: 0.8
+offset: 0.15
+alpha: 4
+NN: 128*128
+Cut = 0.6, circular initial zone
