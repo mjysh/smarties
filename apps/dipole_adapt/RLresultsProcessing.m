@@ -12,32 +12,71 @@ set(groot,'defaultPolarAxesTickLabelInterpreter','latex');
 set(groot,'defaultAxesTickLabelInterpreter','latex');
 set(groot,'defaultAxesLineWidth',1);
 %% direction policy training process
-setting = 'ego2sensorFB';
-env = 'CFD';
-for i = 1:2
-    dir = [setting, env, num2str(i),'/agent_00_rank_000_cumulative_rewards.dat'];
-    data = data_extract(dir);
-    figure, plot(data.reward,'.','markersize',0.1);
-    hold on, plot(movmean(data.reward, 200));
-    xlabel('episode');
-    ylabel('reward');
-    title([setting, env, num2str(i)])
-    exportgraphics(gcf,['/home/yusheng/Dropbox/transfer/dipole_log/',setting, env, num2str(i),'.eps'])
+name = 'ego2sensorLRCFDGrad1';
+dir = [name,'/agent_00_rank_000_cumulative_rewards.dat'];
+data = data_extract(dir);
+figure, plot(data.reward,'.','markersize',0.1);
+hold on, plot(movmean(data.reward, 200));
+xlabel('episode');
+ylabel('reward');
+title(name)
+exportgraphics(gcf,['/home/yusheng/Dropbox/transfer/dipole_log/',name,'.eps'])
 %     savefig(['/home/yusheng/Dropbox/transfer/dipole_log/',setting, env, num2str(i),'.fig'])
-end
+name = 'ego2sensorLRCFDGrad2';
+dir = [name,'/agent_00_rank_000_cumulative_rewards.dat'];
+data = data_extract(dir);
+figure, plot(data.reward,'.','markersize',0.1);
+hold on, plot(movmean(data.reward, 200));
+xlabel('episode');
+ylabel('reward');
+title(name)
+exportgraphics(gcf,['/home/yusheng/Dropbox/transfer/dipole_log/',name,'.eps'])
 
-setting = 'ego2sensorLR';
-env = 'CFD';
-for i = 1:2
-    dir = [setting, env, num2str(i),'/agent_00_rank_000_cumulative_rewards.dat'];
-    data = data_extract(dir);
-    figure, plot(data.reward,'.','markersize',0.1);
-    hold on, plot(movmean(data.reward, 200));
-    xlabel('episode');
-    ylabel('reward');
-    title([setting, env, num2str(i)])
-    exportgraphics(gcf,['/home/yusheng/Dropbox/transfer/dipole_log/',setting, env, num2str(i),'.eps'])
-end
+name = 'ego2sensorFBCFDGrad1';
+dir = [name,'/agent_00_rank_000_cumulative_rewards.dat'];
+data = data_extract(dir);
+figure, plot(data.reward,'.','markersize',0.1);
+hold on, plot(movmean(data.reward, 200));
+xlabel('episode');
+ylabel('reward');
+title(name)
+exportgraphics(gcf,['/home/yusheng/Dropbox/transfer/dipole_log/',name,'.eps'])
+
+name = 'ego2sensorLRCFDclosersensor1';
+dir = [name,'/agent_00_rank_000_cumulative_rewards.dat'];
+data = data_extract(dir);
+figure, plot(data.reward,'.','markersize',0.1);
+hold on, plot(movmean(data.reward, 200));
+xlabel('episode');
+ylabel('reward');
+title(name)
+exportgraphics(gcf,['/home/yusheng/Dropbox/transfer/dipole_log/',name,'.eps'])
+
+% setting = 'ego2sensorLR';
+% env = 'CFD';
+% for i = 1:2
+%     dir = [setting, env, num2str(i),'/agent_00_rank_000_cumulative_rewards.dat'];
+%     data = data_extract(dir);
+%     figure, plot(data.reward,'.','markersize',0.1);
+%     hold on, plot(movmean(data.reward, 200));
+%     xlabel('episode');
+%     ylabel('reward');
+%     title([setting, env, num2str(i)])
+%     exportgraphics(gcf,['/home/yusheng/Dropbox/transfer/dipole_log/',setting, env, num2str(i),'.eps'])
+% end
+% setting = 'ego2sensorFB';
+% env = 'CFD';
+% for i = 1:2
+%     dir = [setting, env, num2str(i),'/agent_00_rank_000_cumulative_rewards.dat'];
+%     data = data_extract(dir);
+%     figure, plot(data.reward,'.','markersize',0.1);
+%     hold on, plot(movmean(data.reward, 200));
+%     xlabel('episode');
+%     ylabel('reward');
+%     title([setting, env, num2str(i)])
+%     exportgraphics(gcf,['/home/yusheng/Dropbox/transfer/dipole_log/',setting, env, num2str(i),'.eps'])
+% %     savefig(['/home/yusheng/Dropbox/transfer/dipole_log/',setting, env, num2str(i),'.fig'])
+% end
 % only when each training has same length
 % c_trun = struct2cell(data);
 % reward_trun = cell2mat(c_trun(3,:));
