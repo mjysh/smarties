@@ -13,7 +13,7 @@
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
-
+print(sys.argv)
 FILE = sys.argv[1]
 
 if len(sys.argv) > 2:

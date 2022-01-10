@@ -46,7 +46,7 @@ def setupSmartiesCommon(comm):
     # creating environment
     with open("../paramToUse.txt", "r") as paramFile:
         envSetting = paramFile.readline()
-    env = DipoleSingleEnv(paramSource='settings.envParam_' + envSetting)
+    env = DipoleSingleEnv(paramSource='envParam_' + envSetting)
 
     # set the length of an episode
     from gym.wrappers.time_limit import TimeLimit
@@ -83,7 +83,6 @@ def setupSmartiesCommon(comm):
                              env.action_space.low, isBounded, 0)
     else:
         assert(False)
-
     return env
 
 
@@ -106,6 +105,8 @@ def train_main(comm):
             if done:
                 break
 def test_main(comm):
+    print(comm.isTraining())
+    assert comm.isTraining() == False
     env1 = setupSmartiesCommon(comm)
     while True:  # testing loop
         print('NEW EPISODE\n')
@@ -130,34 +131,83 @@ def test_main(comm):
         if comm.terminateTraining():
             break
 def success_rate(comm):
+    """ randomly initialize the environment and test the succeess rate"""
     totalNum = 0
     success = 0
     env = setupSmartiesCommon(comm)
-    while True:  # testing loop
+    while True:  # testing episode loop
         totalNum += 1
-        # print('NEW EPISODE\n')
+        print('NEW EPISODE\n')
         observation = env.reset()
         t = 0
         comm.sendInitState(observation)
-        while not comm.terminateTraining():  # simulation loop
+        while not comm.terminateTraining():  # simulation step loop
             action = getAction(comm, env)  # receive action from smarties
             observation, reward, done, info = env.step(action)
             # print([f"{o:<.2f}" for o in observation],'a:', f"{action[0]:>.2f}")
             t = t + 1
-            if done and t >= env._max_episode_steps:
+            if done and t >= env._max_episode_steps: 
+                # if time limit exceeded
                 comm.sendLastState(observation, reward)
+                break
             elif done:
+                # if episode succeeds or fails
                 if reward > 50:
                     success += 1
                 comm.sendTermState(observation, reward)
-            else:
-                comm.sendState(observation, reward)
-            if done:
                 break
+            else:
+                # continue to next step
+                comm.sendState(observation, reward)
         if comm.terminateTraining():
-            print('total:', totalNum, 'success:', success)
-            print('success rate:', success/totalNum)
+            print('total:', totalNum-1, 'success:', success)
+            print('success rate:', success/(totalNum-1))
             break
+def success_region(comm):
+    """ systematically initialize the environment and test the succeess rate in different region"""
+    totalNum = 0
+    success = 0
+    env = setupSmartiesCommon(comm)
+    with open("../paramToUse.txt", "r") as paramFile:
+        envSetting = paramFile.readline()
+    with open("../targetPos.txt", "r") as targetFile:
+        x = float(targetFile.readline())
+        y = float(targetFile.readline())
+    with open("success_region.txt", "w") as recordFile:
+            recordFile.writelines(['target Position: '+ str(x)+','+str(y)])
+    # thorough test loops
+    for initX in range(env.permittedL + 0.5, env.permittedR, 0.5):
+        for initY in range(env.permittedD + 0.5, 0, 0.5):
+            for initTheta in range(0, 2*np.pi, np.pi/4):
+                totalNum += 1
+                observation = env.reset(position = [initX, initY, initTheta],\
+                                        target = [x, y])
+                t = 0
+                comm.sendInitState(observation)
+                while not comm.terminateTraining():  # simulation loop
+                    action = getAction(comm, env)  # receive action from smarties
+                    observation, reward, done, info = env.step(action)
+                    # print([f"{o:<.2f}" for o in observation],'a:', f"{action[0]:>.2f}")
+                    t = t + 1
+                    if done:
+                        if t >= env._max_episode_steps: 
+                            # if time limit exceeded
+                            comm.sendLastState(observation, reward)
+                        else:
+                            if reward > 50:
+                                success += 1
+                            comm.sendTermState(observation, reward)
+                        with open("success_region.txt", "a") as recordFile:
+                            recordFile.write(f"init:{initX:5.2f},{initY:5.2f},{initTheta:5.2f}. reward:{reward:5.2f}\n")
+                        break
+                    else:
+                        # continue to next step
+                        comm.sendState(observation, reward)
+                if comm.terminateTraining():
+                    print('TESTS NOT FINISHED!!!!')
+                    break
+    print('total:', totalNum, 'success:', success)
+    print('success rate:', success/totalNum)
     
 
 if __name__ == '__main__':
@@ -175,12 +225,32 @@ if __name__ == '__main__':
         del sys.argv[temp:temp+2]
         with open("paramToUse.txt", "w") as paramFile:
             paramFile.write(s)
-    e = rl.Engine(sys.argv)
-    if (e.parse()):
-        exit()
-    if "--successRate" in sys.argv and "--nEvalEpisodes" in sys.argv:
+    # print(e.run.__doc__.text)
+    # exit()
+    # if (e.parse()):
+    #     exit()
+    if "--TestRegion" in sys.argv and "--Target" in sys.argv:
+        sys.argv.append("--nEvalEpisodes")
+        sys.argv.append("100000000")
+        temp = sys.argv.index("--Target")
+        x,y = sys.argv[temp+1], sys.argv[temp+2]
+        with open("targetPos.txt", "w") as targetFile:
+            targetFile.write(x+"\n")
+            targetFile.write(y+"\n")
+        e = rl.Engine(sys.argv)
+        e.run(success_region)
+    elif "--successRate" in sys.argv and "--nEvalEpisodes" in sys.argv:
+        temp = sys.argv.index("--successRate")
+        del sys.argv[temp]
+        # exit()
+        e = rl.Engine(sys.argv)
         e.run(success_rate)
     elif "--nEvalEpisodes" in sys.argv:
+        print("TESTING by random cases")
+        e = rl.Engine(sys.argv)
         e.run(test_main)
-    else:
+    elif "--nTrainSteps" in sys.argv:
+        e = rl.Engine(sys.argv)
         e.run(train_main)
+    else:
+        sys.exit("More specific arguments required!")

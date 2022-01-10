@@ -8,7 +8,8 @@
   "lambda": 0.97,
   "obsPerStep": 6.4,
   "learnrate": 0.0001,
-  "maxTotObsNum": 2048,
+  "maxTotObsNum": 262144,
+  "minTotObsNum": 131072,
   "nnLayerSizes": [64],
   "klDivConstraint": 0.01
 }

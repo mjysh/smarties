@@ -42,7 +42,27 @@ ylabel('reward');
 title(name)
 exportgraphics(gcf,['/home/yusheng/Dropbox/transfer/dipole_log/',name,'.eps'])
 
+name = 'ego2sensorFBCFDGrad2';
+dir = [name,'/agent_00_rank_000_cumulative_rewards.dat'];
+data = data_extract(dir);
+figure, plot(data.reward,'.','markersize',0.1);
+hold on, plot(movmean(data.reward, 200));
+xlabel('episode');
+ylabel('reward');
+title(name)
+exportgraphics(gcf,['/home/yusheng/Dropbox/transfer/dipole_log/',name,'.eps'])
+
 name = 'ego2sensorLRCFDclosersensor1';
+dir = [name,'/agent_00_rank_000_cumulative_rewards.dat'];
+data = data_extract(dir);
+figure, plot(data.reward,'.','markersize',0.1);
+hold on, plot(movmean(data.reward, 200));
+xlabel('episode');
+ylabel('reward');
+title(name)
+exportgraphics(gcf,['/home/yusheng/Dropbox/transfer/dipole_log/',name,'.eps'])
+
+name = 'ego2sensorLRCFDclosersensor2';
 dir = [name,'/agent_00_rank_000_cumulative_rewards.dat'];
 data = data_extract(dir);
 figure, plot(data.reward,'.','markersize',0.1);

@@ -12,7 +12,7 @@ namespace py = pybind11;
 
 PYBIND11_MODULE(smarties, m)
 {
-  py::class_<smarties::Engine>(m, "Engine")
+  py::class_<smarties::Engine>(m, "Engine", py::dynamic_attr())
   
     .def(py::init<std::vector<std::string>> (), py::arg("args"),
          "Constructor for smarties' deployment engine.")
