@@ -9,6 +9,7 @@
 #include "Communicator.h"
 #include "Utils/SocketsLib.h"
 #include "Core/Worker.h"
+#include <iostream>
 
 namespace smarties
 {

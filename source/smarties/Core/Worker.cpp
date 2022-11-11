@@ -13,7 +13,7 @@
 #include "../Utils/SstreamUtilities.h"
 
 #include <fstream>
-
+#include <iostream>
 namespace smarties
 {
 

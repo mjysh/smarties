@@ -15,6 +15,7 @@
 #include <cassert>
 #include <mutex>
 #include <cmath>
+#include <iostream>
 
 namespace smarties
 {
@@ -176,8 +177,12 @@ struct Episode
     for (Uint j=0, k=0; j <= nAppended; ++j) {
       const Uint t = std::max((Uint) samp - j, (Uint) 0);
       assert(states[t].size() == dimS);
-      for (Uint i=0; i<dimS; ++i, ++k)
+      // std::cout << "EPISODE->standardizedState," << t << " dimS" << dimS << " nAppended" << nAppended << std::endl;
+      for (Uint i=0; i<dimS; ++i, ++k){
         ret[k] = (states[t][i] - MDP.stateMean[i]) * MDP.stateScale[i];
+        // std::cout << "state " << states[t][i] << "MDP.stateMean[i] " <<MDP.stateMean[i] << "MDP.stateScale[i] " << MDP.stateScale[i] << " "<< k <<" "<< i << "ret " << ret[k] << std::endl;
+      }
+      // std::cout << "ret " << ret[k] << " " << k << std::endl;
     }
     return ret;
   }

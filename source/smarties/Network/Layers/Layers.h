@@ -12,6 +12,7 @@
 #include "Parameters.h"
 #include "Activation.h"
 #include "Functions.h"
+#include <iostream>
 
 #ifndef __STDC_VERSION__ //it should never be defined with g++
 #define __STDC_VERSION__ 0
@@ -224,6 +225,11 @@ class InputLayer: public Layer
                 const Activation*const curr,
                 const Parameters*const para) const override
   {
+    // std::cout << "OBS_INPUT?";
+    // for (int i=0; i < size; i++) 
+    //     std::cout << curr->Y(ID)[i] << "  ";
+    // std::cout << std::endl;
+
     #ifdef SMARTIES_INPUT_SANITIZE
       // In case input has a very wide kurtosis, network grads might explode.
       // (Remember that smarties gradually learns mean and stdev, so each input
@@ -232,6 +238,7 @@ class InputLayer: public Layer
       // From from 6 to 111 stdevs away, we smoothly transition to sqrt(x).
       // Beyond 111 stdevs away we log the input to avoid exploding gradients.
       nnReal* const ret = curr->Y(ID);
+      
       for (Uint j=0; j<size; ++j) {
         const nnReal sign = ret[j]>0 ? 1 : -1, absX = std::fabs(ret[j]);
         if        (absX > 111) {
@@ -349,6 +356,7 @@ class ParametricResidualLayer: public Layer
                 const Parameters*const para) const override
   {
     nnReal* const ret = curr->Y(ID);
+    
     assert(curr->sizes[ID-1] >= size);
     memcpy(ret, curr->Y(ID-1), size * sizeof(nnReal));
 
@@ -356,9 +364,18 @@ class ParametricResidualLayer: public Layer
     const nnReal* const B = para->B(ID);
     const nnReal* const inp = curr->Y(ID-2);
     const Uint sizeInp = std::min(curr->sizes[ID-2], size);
-
+  //   std::cout << "RES_INPUT?: ";
+  //   for (int i=0; i < sizeInp; i++) {
+  //     std::cout << inp[i] << "  ";
+  //  }
+  //   std::cout << std::endl;
     #pragma omp simd aligned(ret, inp, W, B : VEC_WIDTH)
     for (Uint j=0; j<sizeInp; ++j) ret[j] += inp[j] * W[j] + B[j];
+  //   std::cout << "RES_OUTPUT?: ";
+  //   for (int i=0; i < sizeInp; i++) {
+  //     std::cout << ret[i] << "  ";
+  //  }
+  //   std::cout << std::endl;
   }
 
   void backward(  const Activation*const prev,
@@ -403,6 +420,7 @@ class ParametricResidualLayer: public Layer
   {
     const nnReal* const bias = para->B(ID);
     const nnReal* const weight = para->W(ID);
+    // std::cout << "RESNET???" << std::endl;
     for(Uint o=0; o<size; ++o) *(tmp++) = (float) weight[o];
     for(Uint o=0; o<size; ++o) *(tmp++) = (float) bias[o];
     return 2*size;
@@ -518,6 +536,16 @@ class ParamLayer: public Layer
       inputs[n] = bias[n];
       output[n] = func->eval(bias[n]);
     }
+  //   std::cout << "PARAM INPUT: " ;
+  //   for (int i=0; i < size; i++) {
+  //     std::cout << inputs[i] << "  ";
+  //  }
+  //   std::cout << std::endl;
+  //   std::cout << "PARAM OUTPUT: ";
+  //   for (int i=0; i < size; i++) {
+  //     std::cout << output[i] << "  ";
+  //  }
+  //   std::cout << std::endl;
   }
 
   void backward(  const Activation*const prev,
@@ -556,6 +584,7 @@ class ParamLayer: public Layer
   {
     const nnReal* const bias = para->B(ID);
     for (Uint n=0; n<size; ++n) tmp[n] = (float) bias[n];
+    // std::cout << "STD???" << std::endl;
     return size;
   }
   size_t restart(const Parameters * const para,

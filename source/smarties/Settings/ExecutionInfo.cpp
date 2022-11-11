@@ -23,6 +23,7 @@ bOwnArgv(true)
 {
   argc = (int) args.size();
   argv = new char * [argc+1];
+  
   for(int i=0; i<argc; ++i) {
     argv[i] = new char[args[i].size() + 1];
     std::copy(args[i].begin(), args[i].end(), argv[i]);
@@ -375,7 +376,10 @@ void ExecutionInfo::figureOutWorkersPattern()
 
 void ExecutionInfo::initialze()
 {
-  if (nEvalEpisodes>0) bTrain = 0;
+  if (nEvalEpisodes>0) {
+    bTrain = 0;
+    printf("TESTING, NOT TRAINING");
+  }
   else                 bTrain = 1;
 
   if(nThreads<1) die("nThreads<1");

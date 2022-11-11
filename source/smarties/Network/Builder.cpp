@@ -17,7 +17,7 @@
 #include "Layers/Layer_GRU.h"
 
 #include "Conv2Dfactory.h"
-
+#include <iostream>
 namespace smarties
 {
 
@@ -29,6 +29,7 @@ void Builder::addInput(const Uint size)
   if(size==0) die("Requested an empty input layer");
   if(bBuilt) die("Cannot build the network multiple times");
   const Uint ID = layers.size();
+  // std::cout << "INPUTSIZE?: " << ID << std::endl;
   layers.emplace_back(
     std::make_unique<InputLayer>(size, ID)
   );

@@ -14,6 +14,7 @@
 #include <array>
 #include <cmath> // log, exp, ...
 #include <cassert>
+#include <iostream>
 
 namespace smarties
 {
@@ -183,8 +184,13 @@ struct StateInfo
   scale(std::vector<T>& observed, const MDPdescriptor& MDP)
   {
     assert(observed.size() == MDP.dimObs());
+    // std::cout << "StateAction->scale" << std::endl;
+    // for (int i=0; i <MDP.dimObs(); i++) std::cout << observed[i] << "  ";
+    // std::cout << std::endl;
     for (Uint i=0; i<MDP.dimObs(); ++i)
       observed[i] = ( observed[i] - MDP.stateMean[i] ) * MDP.stateScale[i];
+    // for (int i=0; i <MDP.dimObs(); i++) std::cout << observed[i] << "  ";
+    // std::cout << std::endl;
   }
 
   template<typename T = Real, typename S> std::vector<T>
@@ -196,9 +202,14 @@ struct StateInfo
   getScaled(const std::vector<S>& observed, const MDPdescriptor& MDP)
   {
     assert(observed.size() == MDP.dimObs());
+    // std::cout << "StateAction->getScaled" << std::endl;
+    // for (int i=0; i <MDP.dimObs(); i++) std::cout << observed[i] << "  ";
+    // std::cout << std::endl;
     std::vector<T> ret(MDP.dimObs());
     for (Uint i=0; i<MDP.dimObs(); ++i)
       ret = ( observed[i] - MDP.stateMean[i] ) * MDP.stateScale[i];
+    // for (int i=0; i <MDP.dimObs(); i++) std::cout << observed[i] << "  ";
+    // std::cout << std::endl;
   }
 };
 
@@ -283,6 +294,10 @@ struct ActionInfo
   template<typename T = Real> static std::vector<T>
   learnerAction2envAction(const Rvec& learnerAct, const MDPdescriptor& MDP)
   {
+    // std::cout <<"ActionScaling? " << std::endl;
+    // for (int i=0; i < MDP.dimAct(); i++) 
+    //     std::cout << learnerAct[i] << "  ";
+    // std::cout << std::endl;
     if(MDP.bDiscreteActions())
         return std::vector<T>(learnerAct.begin(), learnerAct.end());
     std::vector<T> envAct(MDP.dimAct());
@@ -291,6 +306,9 @@ struct ActionInfo
       const auto bound = MDP.isActBounded(i)? std::tanh(learnerAct[i]) : learnerAct[i];
       envAct[i] = MDP.getActScale(i) * bound + MDP.getActShift(i);
     }
+    // for (int i=0; i < MDP.dimAct(); i++) 
+    //     std::cout << envAct[i] << "  ";
+    // std::cout << std::endl;
     return envAct;
   }
   /////////////////////////// CONTINUOUS ACTIONS END ///////////////////////////

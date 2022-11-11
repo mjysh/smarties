@@ -8,6 +8,7 @@
 
 #include "Builder.h"
 #include "Network.h"
+#include <iostream>
 
 namespace smarties
 {
@@ -31,6 +32,7 @@ void Network::save(const Parameters * const W,
   for(const auto & l : layers) {
     const auto written = l->save(W, buf + totWritten);
     totWritten += written;
+    // std::cout << totWritten << std::endl;
   }
   fwrite(buf, sizeof(float), totWritten, wFile);
   fflush(wFile); fclose(wFile); free(buf);

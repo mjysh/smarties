@@ -15,6 +15,7 @@
 
 #include <atomic>
 #include <random>
+#include <iostream>
 #define OUTBUFFSIZE 65536
 
 namespace smarties

@@ -10,6 +10,7 @@
 #include "Optimizer.h"
 #include "Network.h"
 #include "../Utils/ParameterBlob.h"
+#include <iostream>
 
 namespace smarties
 {
@@ -218,13 +219,14 @@ void Approximator::buildFromSettings(const std::vector<Uint> outputSizes)
   }
   // if user already asked RNN/LSTM/GRU, follow settings
   // else if MDP declared that it is partially obs override and use simple RNN
+  // std::cout << "layerSizes: " << layerSizes.size() << std::endl;
   const std::string netType =
     MDP.isPartiallyObservable and settings.bRecurrent == false? "MGU"
                                                               : settings.nnType;
   for(Uint i=0; i<layerSizes.size(); ++i)
     if(layerSizes[i] > 0)
       build->addLayer(layerSizes[i], settings.nnFunc, false, netType);
-
+  // std::cout << settings.nnOutputFunc << std::endl;
   if(nOuts > 0) build->addLayer(nOuts, settings.nnOutputFunc, true);
 }
 

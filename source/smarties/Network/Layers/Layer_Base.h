@@ -10,7 +10,7 @@
 #define smarties_BaseLayer_h
 
 #include "Layers.h"
-
+#include <iostream>
 namespace smarties
 {
 
@@ -71,8 +71,14 @@ class BaseLayer: public Layer
     {
       const nnReal* const inputs = curr->Y(ID-link);
       const nnReal* const weight = para->W(ID);
+  //     std::cout << "FORWARD!!!\nInput: ";
+  //     for (int i=0; i < nInputs; i++) {
+  //     std::cout << inputs[i] << "  ";
+  //  }
+  //     std::cout << std::endl;
       for (Uint i = 0; i < nInputs; ++i)
       {
+        
         const nnReal* const W = weight + nOut_simd*i;
         #pragma omp simd aligned(suminp, inputs, W : VEC_WIDTH)
         for (Uint o = 0; o < nNeurons; ++o)
@@ -91,7 +97,17 @@ class BaseLayer: public Layer
           suminp[o] += inputs[i] * W[o];
       }
     }
+  //   std::cout << "Output: ";
+  //   for (int i=0; i < nNeurons; i++) {
+  //     std::cout << suminp[i] << "  ";
+  //  }
+  //   std::cout << std::endl;
     func->eval(suminp, curr->Y(ID), nNeurons);
+  //   std::cout << "NONLinearOutput: ";
+  //   for (int i=0; i < nNeurons; i++) {
+  //     std::cout << curr->Y(ID)[i] << "  ";
+  //  }
+  //   std::cout << std::endl;
   }
 
   void backward(  const Activation*const prev,
@@ -145,6 +161,8 @@ class BaseLayer: public Layer
   {
     const nnReal* const bias = para->B(ID);
     const nnReal* const weight = para->W(ID);
+    // std::cout << "ninput: " << nInputs << "nOUT: " << nNeurons << "IsRecurr"
+    // << bRecurrent << std::endl;
     for(Uint i=0; i<nInputs + bRecurrent*nNeurons; ++i)
       for(Uint o=0; o<nNeurons; ++o)
         *(tmp++) = (float) weight[o + nOut_simd * i];

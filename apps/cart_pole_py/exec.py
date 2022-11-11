@@ -78,9 +78,9 @@ class CartPole:
 def app_main(comm):
   env = CartPole()
   # state is x, v, angle, omega, cos(angle), sin(angle), action is Fx
-  comm.setStateActionDims(6, 1)
+  comm.setStateActionDims(6, 2)
   #Here, the action space is in [-10, 10] and is bounded.
-  comm.setActionScales([10.0], [-10.0], areBounds=True)
+  comm.setActionScales([10.0,10.0], [-10.0,-10.0], areBounds=True)
   #Agent knows cos and sin of angle, angle itself is hidden:
   comm.setStateObservable([True, True, False, True, True, True])
 
